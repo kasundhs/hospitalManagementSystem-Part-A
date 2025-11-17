@@ -20,12 +20,14 @@ public class Producer extends Thread {
             while (running) {
                 TestOrder order = new TestOrder(types[rnd.nextInt(types.length)]);
                 queue.produce(order);
-                System.out.println(getName() + " produced " + order);
+                // System.out.println(getName() + " produced " + order);
+                LogWriter.log(getName() + " produced " + order);
                 Thread.sleep(300 + rnd.nextInt(300));
             }
         } catch (InterruptedException e) {
             if (running) {
-                System.out.println(getName() + " interrupted unexpectedly");
+                // System.out.println(getName() + " interrupted unexpectedly");
+                LogWriter.log(getName() + " interrupted unexpectedly");
             }
         }
     }

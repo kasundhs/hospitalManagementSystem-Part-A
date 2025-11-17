@@ -20,13 +20,15 @@ public class Consumer extends Thread {
         try {
             while (running) {
                 TestOrder order = queue.consume();
-                System.out.println(getName() + " processing " + order);
+                // System.out.println(getName() + " processing " + order);
+                LogWriter.log(getName() + " processing " + order);
                 Thread.sleep(500 + rnd.nextInt(500));
                 state.incrementProcessed();
             }
         } catch (InterruptedException e) {
             if (running) {
-                System.out.println(getName() + " interrupted unexpectedly");
+                // System.out.println(getName() + " interrupted unexpectedly");
+                LogWriter.log(getName() + " interrupted unexpectedly");
             }
         }
     }

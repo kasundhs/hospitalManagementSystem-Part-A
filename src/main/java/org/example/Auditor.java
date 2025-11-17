@@ -18,13 +18,15 @@ public class Auditor extends Thread {
                 int processed = state.getTotalProcessed();
                 state.unlockRead();
 
-                System.out.println(getName() + " read totalProcessed=" + processed);
+                // System.out.println(getName() + " read totalProcessed=" + processed);
+                LogWriter.log(getName() + " read totalProcessed=" + processed);
 
                 Thread.sleep(400);
             }
         } catch (InterruptedException e) {
             if (running) {
-                System.out.println(getName() + " interrupted unexpectedly");
+                // System.out.println(getName() + " interrupted unexpectedly");
+                LogWriter.log(getName() + " interrupted unexpectedly");
             }
         }
     }

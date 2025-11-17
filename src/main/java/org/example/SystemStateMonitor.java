@@ -17,7 +17,8 @@ public class SystemStateMonitor {
 
     public synchronized void unlockRead() {
         activeReaders--;
-        if (activeReaders == 0) notifyAll();
+        if (activeReaders == 0)
+            notifyAll();
     }
 
     public synchronized void lockWrite() throws InterruptedException {
@@ -46,7 +47,4 @@ public class SystemStateMonitor {
         currentCapacity = cap;
     }
 
-    public synchronized int getCapacity() {
-        return currentCapacity;
-    }
 }
