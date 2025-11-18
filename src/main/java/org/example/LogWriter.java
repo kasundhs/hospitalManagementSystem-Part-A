@@ -26,9 +26,6 @@ public class LogWriter {
         String formatted = timestamp + " | " + msg;
 
         synchronized (lock) {
-            // print to console
-            System.out.println(formatted);
-
             // write to log file
             writer.println(formatted);
             writer.flush();

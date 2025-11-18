@@ -1,4 +1,5 @@
 package org.example;
+import java.util.Scanner;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
@@ -26,7 +27,9 @@ public class Main {
         auditor2.start();
         supervisor.start();
 
-        Thread.sleep(15000);
+        System.out.println("System running... Press ENTER to stop execution.");
+        Scanner sc = new Scanner(System.in);
+        sc.nextLine();
 
         prod1.shutdown();
         prod2.shutdown();

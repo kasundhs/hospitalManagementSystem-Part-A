@@ -33,6 +33,11 @@ public class Auditor implements Runnable {
         }
     }
 
+    public void start() {
+        thread = new Thread(this, name);
+        thread.start();
+    }
+
     public void shutdown() {
         running = false;
         if(thread != null)
