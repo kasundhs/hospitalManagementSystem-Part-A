@@ -2,16 +2,18 @@ package org.example;
 
 import java.util.Random;
 
-public class Consumer extends Thread {
+public class Consumer implements Runnable {
     private final IntakeQueueMonitor queue;
     private final SystemStateMonitor state;
     private volatile boolean running = true;
     private final Random rnd = new Random();
+    private final String name;
+    private Thread thread;
 
-    public Consumer(IntakeQueueMonitor q, SystemStateMonitor s, String name) {
-        super(name);
-        this.queue = q;
-        this.state = s;
+    public Consumer(IntakeQueueMonitor queue, SystemStateMonitor state, String name) {
+        this.name = name;
+        this.queue = queue;
+        this.state = state;
     }
 
     @Override
@@ -21,21 +23,22 @@ public class Consumer extends Thread {
             while (running) {
                 TestOrder order = queue.consume();
                 // System.out.println(getName() + " processing " + order);
-                LogWriter.log(getName() + " processing " + order);
+                LogWriter.log(name + " processing " + order);
                 Thread.sleep(500 + rnd.nextInt(500));
                 state.incrementProcessed();
             }
         } catch (InterruptedException e) {
             if (running) {
                 // System.out.println(getName() + " interrupted unexpectedly");
-                LogWriter.log(getName() + " interrupted unexpectedly");
+                LogWriter.log(name + " interrupted unexpectedly");
             }
         }
     }
 
     public void shutdown() {
         running = false;
-        interrupt();
+        if (thread != null)
+            thread.interrupt();
     }
 }
 

@@ -2,14 +2,16 @@ package org.example;
 
 import java.util.Random;
 
-public class Producer extends Thread {
+public class Producer implements Runnable {
     private final IntakeQueueMonitor queue;
     private volatile boolean running = true;
     private final Random rnd = new Random();
+    private final String name;
+    private Thread thread;
 
-    public Producer(IntakeQueueMonitor q, String name) {
-        super(name);
-        this.queue = q;
+    public Producer(IntakeQueueMonitor queue, String name) {
+        this.name = name;
+        this.queue = queue;
     }
 
     @Override
@@ -21,19 +23,20 @@ public class Producer extends Thread {
                 TestOrder order = new TestOrder(types[rnd.nextInt(types.length)]);
                 queue.produce(order);
                 // System.out.println(getName() + " produced " + order);
-                LogWriter.log(getName() + " produced " + order);
+                LogWriter.log(name + " produced " + order);
                 Thread.sleep(300 + rnd.nextInt(300));
             }
         } catch (InterruptedException e) {
             if (running) {
                 // System.out.println(getName() + " interrupted unexpectedly");
-                LogWriter.log(getName() + " interrupted unexpectedly");
+                LogWriter.log(name + " interrupted unexpectedly");
             }
         }
     }
 
     public void shutdown() {
         running = false;
-        interrupt();
+        if(thread != null)
+            thread.interrupt();
     }
 }

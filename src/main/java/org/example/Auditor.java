@@ -1,12 +1,14 @@
 package org.example;
 
-public class Auditor extends Thread {
+public class Auditor implements Runnable {
     private final SystemStateMonitor state;
     private volatile boolean running = true;
+    private final String name;
+    private Thread thread;
 
-    public Auditor(SystemStateMonitor s, String name) {
-        super(name);
-        this.state = s;
+    public Auditor(SystemStateMonitor state, String name) {
+        this.name = name;
+        this.state = state;
     }
 
     @Override
@@ -19,20 +21,21 @@ public class Auditor extends Thread {
                 state.unlockRead();
 
                 // System.out.println(getName() + " read totalProcessed=" + processed);
-                LogWriter.log(getName() + " read totalProcessed=" + processed);
+                LogWriter.log(name + " read totalProcessed=" + processed);
 
                 Thread.sleep(400);
             }
         } catch (InterruptedException e) {
             if (running) {
                 // System.out.println(getName() + " interrupted unexpectedly");
-                LogWriter.log(getName() + " interrupted unexpectedly");
+                LogWriter.log(name + " interrupted unexpectedly");
             }
         }
     }
 
     public void shutdown() {
         running = false;
-        interrupt();
+        if(thread != null)
+            thread.interrupt();
     }
 }

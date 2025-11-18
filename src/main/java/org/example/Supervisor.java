@@ -2,13 +2,15 @@ package org.example;
 
 import java.util.Random;
 
-public class Supervisor extends Thread {
+public class Supervisor implements Runnable {
     private final SystemStateMonitor state;
     private volatile boolean running = true;
     private final Random rnd = new Random();
+    private final String name;
+    private Thread thread;
 
     public Supervisor(SystemStateMonitor state, String name) {
-        super(name);
+        this.name = name;
         this.state = state;
     }
 
@@ -21,7 +23,7 @@ public class Supervisor extends Thread {
                 int newCap = 2 + rnd.nextInt(4);
                 state.setCapacity(newCap);
                 // System.out.println(getName() + " updated analyzer capacity to " + newCap);
-                LogWriter.log(getName() + " updated analyzer capacity to " + newCap);
+                LogWriter.log(name + " updated analyzer capacity to " + newCap);
                 state.unlockWrite();
 
                 Thread.sleep(2000);
@@ -29,14 +31,15 @@ public class Supervisor extends Thread {
         } catch (InterruptedException e) {
             if (running) {
                 // System.out.println(getName() + " interrupted unexpectedly");
-                LogWriter.log(getName() + " interrupted unexpectedly");
+                LogWriter.log(name + " interrupted unexpectedly");
             }
         }
     }
 
     public void shutdown() {
         running = false;
-        interrupt();
+        if(thread != null)
+            thread.interrupt();
     }
 }
 

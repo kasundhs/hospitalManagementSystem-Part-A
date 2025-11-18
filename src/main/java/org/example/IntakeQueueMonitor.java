@@ -28,7 +28,4 @@ public class IntakeQueueMonitor {
         return order;
     }
 
-    public synchronized int getQueueSize() {
-        return queue.size();
-    }
 }
