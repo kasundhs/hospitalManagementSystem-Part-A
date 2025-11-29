@@ -21,11 +21,13 @@ public class Consumer implements Runnable {
     public void run() {
         try {
             while (running) {
-                TestOrder order = queue.consume();
+                boolean emergencyFirst = state.isEmergencyPriorityEnabled();
+                TestOrder order = queue.consume(emergencyFirst);
                 // System.out.println(getName() + " processing " + order);
                 LogWriter.log(name + " processing " + order);
-                Thread.sleep(500 + rnd.nextInt(500));
+                Thread.sleep(200 + rnd.nextInt(500));
                 state.incrementProcessed();
+
             }
         } catch (InterruptedException e) {
             if (running) {

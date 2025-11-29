@@ -1,50 +1,64 @@
 package org.example;
 
 public class SystemStateMonitor {
-    private int activeReaders = 0;
-    private int waitingWriters = 0;
-    private int activeWriters = 0;
+    private int activeReadersCount = 0;
+    private int waitingWritersCount = 0;
+    private int activeWritersCount = 0;
 
-    private int totalProcessed = 0;
-    private int currentCapacity = 3;
+    private int totalProcessedReportCount = 0;
+    private int emergencyPatientCount =0;
+    private boolean emergencyPriorityEnabled = true;
 
     public synchronized void lockRead() throws InterruptedException {
-        while (waitingWriters > 0 || activeWriters > 0) {
+        while (waitingWritersCount > 0 || activeWritersCount > 0) {
             wait();
         }
-        activeReaders++;
+        activeReadersCount++;
     }
 
     public synchronized void unlockRead() {
-        activeReaders--;
-        if (activeReaders == 0)
+        activeReadersCount--;
+        if (activeReadersCount == 0)
             notifyAll();
     }
 
     public synchronized void lockWrite() throws InterruptedException {
-        waitingWriters++;
-        while (activeReaders > 0 || activeWriters > 0) {
+        waitingWritersCount++;
+        while (activeReadersCount > 0 || activeWritersCount > 0) {
             wait();
         }
-        waitingWriters--;
-        activeWriters = 1;
+        waitingWritersCount--;
+        activeWritersCount = 1;
     }
 
     public synchronized void unlockWrite() {
-        activeWriters = 0;
+        activeWritersCount = 0;
         notifyAll();
     }
 
     public synchronized void incrementProcessed() {
-        totalProcessed++;
+        totalProcessedReportCount++;
     }
 
     public synchronized int getTotalProcessed() {
-        return totalProcessed;
+        return totalProcessedReportCount;
     }
 
-    public synchronized void setCapacity(int cap) {
-        currentCapacity = cap;
+
+    public synchronized void setEmergencyPriorityEnabled(boolean enabled) {
+        emergencyPriorityEnabled = enabled;
+    }
+
+    public synchronized boolean isEmergencyPriorityEnabled() {
+        return emergencyPriorityEnabled;
+    }
+
+    public void setEmergencyPatientCount() {
+        emergencyPatientCount++;
+    }
+
+    public int getGetEmergencyPatientCount() {
+        return emergencyPatientCount;
     }
 
 }

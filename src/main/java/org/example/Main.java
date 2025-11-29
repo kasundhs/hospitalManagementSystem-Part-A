@@ -8,14 +8,14 @@ public class Main {
         IntakeQueueMonitor queue = new IntakeQueueMonitor(10);
         SystemStateMonitor state = new SystemStateMonitor();
 
-        Producer prod1 = new Producer(queue, "Clinic-1");
-        Producer prod2 = new Producer(queue, "Clinic-2");
+        Producer prod1 = new Producer(queue, state, "Clinic counter -1");
+        Producer prod2 = new Producer(queue, state, "Clinic counter -2");
 
-        Consumer consumer1 = new Consumer(queue, state, "Analyzer-1");
-        Consumer consumer2 = new Consumer(queue, state, "Analyzer-2");
+        Consumer consumer1 = new Consumer(queue, state, "Doctor -1");
+        Consumer consumer2 = new Consumer(queue, state, "Doctor -2");
 
-        Auditor auditor1 = new Auditor(state, "Auditor-1");
-        Auditor auditor2 = new Auditor(state, "Auditor-2");
+        Auditor auditor1 = new Auditor(state, "Auditor -1");
+        Auditor auditor2 = new Auditor(state, "Auditor -2");
 
         Supervisor supervisor = new Supervisor(state, "Supervisor");
 

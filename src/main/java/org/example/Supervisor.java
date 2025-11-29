@@ -20,13 +20,13 @@ public class Supervisor implements Runnable {
         try {
             while (running) {
                 state.lockWrite();
-                int newCap = 2 + rnd.nextInt(4);
-                state.setCapacity(newCap);
-                // System.out.println(getName() + " updated analyzer capacity to " + newCap);
-                LogWriter.log(name + " updated analyzer capacity to " + newCap);
+                if(state.getGetEmergencyPatientCount() < 3){
+                    state.setEmergencyPriorityEnabled(false);
+                }
+                LogWriter.log(name + "Update Emergency Prioritization as " + state.isEmergencyPriorityEnabled());
                 state.unlockWrite();
 
-                Thread.sleep(2000);
+                Thread.sleep(rnd.nextInt(600));
             }
         } catch (InterruptedException e) {
             if (running) {

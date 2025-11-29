@@ -23,7 +23,7 @@ public class Auditor implements Runnable {
                 // System.out.println(getName() + " read totalProcessed=" + processed);
                 LogWriter.log(name + " read totalProcessed=" + processed);
 
-                Thread.sleep(400);
+                Thread.sleep(600);
             }
         } catch (InterruptedException e) {
             if (running) {
