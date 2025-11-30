@@ -20,13 +20,15 @@ public class Supervisor implements Runnable {
         try {
             while (running) {
                 state.lockWrite();
-                if(state.getGetEmergencyPatientCount() < 3){
+                if(state.getEmergencyPatientCount() < 2){
                     state.setEmergencyPriorityEnabled(false);
                 }
+                else
+                    state.setEmergencyPriorityEnabled(true);
                 LogWriter.log(name + "Update Emergency Prioritization as " + state.isEmergencyPriorityEnabled());
                 state.unlockWrite();
 
-                Thread.sleep(rnd.nextInt(600));
+                Thread.sleep(rnd.nextInt(1000));
             }
         } catch (InterruptedException e) {
             if (running) {
@@ -43,8 +45,10 @@ public class Supervisor implements Runnable {
 
     public void shutdown() {
         running = false;
-        if(thread != null)
+        if(thread != null){
+            System.out.println("System is Shutting Down....");
             thread.interrupt();
+        }
     }
 }
 

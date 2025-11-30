@@ -34,8 +34,9 @@ public class IntakeQueueMonitor {
             wait();
         }
         TestOrder order;
-        if(emergencyFirst && !emergencyQueue.isEmpty())
+        if(emergencyFirst && !emergencyQueue.isEmpty()){
             order = emergencyQueue.poll();
+        }
 
         /* While emergencyFirst is disabled emergency patients have to wait
         * until normal queue is empty. To prevent that use isForNormalPatients variable.*/

@@ -23,7 +23,7 @@ public class Producer implements Runnable {
         String[] types = {"PCR", "Blood Test", "Histopathology)"};
         try {
             while (running) {
-                Priority priority = rnd.nextInt(10) < 3 ? Priority.EMERGENCY : Priority.NORMAL;
+                Priority priority = rnd.nextInt(10) < 5 ? Priority.EMERGENCY : Priority.NORMAL;
                 TestOrder order = new TestOrder(types[rnd.nextInt(types.length)],priority);
                 if(priority == Priority.EMERGENCY){
                     state.setEmergencyPatientCount();

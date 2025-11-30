@@ -57,8 +57,10 @@ public class SystemStateMonitor {
         emergencyPatientCount++;
     }
 
-    public int getGetEmergencyPatientCount() {
+    public int getEmergencyPatientCount() {
         return emergencyPatientCount;
     }
+
+    public void decrementEmergencyPatientCount() { emergencyPatientCount--;}
 
 }

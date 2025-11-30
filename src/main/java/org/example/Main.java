@@ -4,8 +4,8 @@ import java.util.Scanner;
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    public static void main(String[] args) throws InterruptedException {
-        IntakeQueueMonitor queue = new IntakeQueueMonitor(10);
+    public static void main(String[] args){
+        IntakeQueueMonitor queue = new IntakeQueueMonitor(20);
         SystemStateMonitor state = new SystemStateMonitor();
 
         Producer prod1 = new Producer(queue, state, "Clinic counter -1");
@@ -21,11 +21,12 @@ public class Main {
 
         prod1.start();
         prod2.start();
+        supervisor.start();
         consumer1.start();
         consumer2.start();
         auditor1.start();
         auditor2.start();
-        supervisor.start();
+
 
         System.out.println("System running... Press ENTER to stop execution.");
         Scanner sc = new Scanner(System.in);
