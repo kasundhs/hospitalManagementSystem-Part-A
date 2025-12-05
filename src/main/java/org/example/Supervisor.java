@@ -46,7 +46,6 @@ public class Supervisor implements Runnable {
     public void shutdown() {
         running = false;
         if(thread != null){
-            System.out.println("System is Shutting Down....");
             thread.interrupt();
         }
     }

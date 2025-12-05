@@ -23,13 +23,14 @@ public class Consumer implements Runnable {
             while (running) {
                 boolean emergencyFirst = state.isEmergencyPriorityEnabled();
                 TestOrder order = queue.consume(emergencyFirst);
-                if(order.priority == TestOrder.Priority.EMERGENCY)
-                    state.decrementEmergencyPatientCount();
-                // System.out.println(getName() + " processing " + order);
-                LogWriter.log(name + " processing " + order);
-                Thread.sleep(200 + rnd.nextInt(500));
-                state.incrementProcessed();
-
+                if(order!=null){
+                    if(order.priority == TestOrder.Priority.EMERGENCY)
+                        state.decrementEmergencyPatientCount();
+                    // System.out.println(getName() + " processing " + order);
+                    LogWriter.log(name + " processing " + order);
+                    Thread.sleep(200 + rnd.nextInt(500));
+                    state.incrementProcessed();
+                }
             }
         } catch (InterruptedException e) {
             if (running) {

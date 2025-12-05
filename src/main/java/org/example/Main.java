@@ -34,10 +34,14 @@ public class Main {
 
         prod1.shutdown();
         prod2.shutdown();
-        consumer1.shutdown();
-        consumer2.shutdown();
-        auditor1.shutdown();
-        auditor2.shutdown();
-        supervisor.shutdown();
+        queue.setExpiration();
+        if(queue.totalQueueSize() == 0){
+            System.out.println("System is Shutting Down....");
+            consumer1.shutdown();
+            consumer2.shutdown();
+            auditor1.shutdown();
+            auditor2.shutdown();
+            supervisor.shutdown();
+        }
     }
 }

@@ -1,7 +1,7 @@
 package org.example;
 
 import java.util.Random;
-import org.example.TestOrder.Priority;
+import org.example.TestOrder.*;
 
 public class Producer implements Runnable {
     private final IntakeQueueMonitor queue;
@@ -24,11 +24,17 @@ public class Producer implements Runnable {
         try {
             while (running) {
                 Priority priority = rnd.nextInt(10) < 5 ? Priority.EMERGENCY : Priority.NORMAL;
-                TestOrder order = new TestOrder(types[rnd.nextInt(types.length)],priority);
+                IsSpecialTest testSpeciality = rnd.nextInt(10) < 2 ? IsSpecialTest.YES : IsSpecialTest.NO;
+                TestOrder order = new TestOrder(types[rnd.nextInt(types.length)],priority, testSpeciality);
+
+                if(order.isSpecialTest == IsSpecialTest.YES){ // Rejected Special tests
+                    LogWriter.log(order.toString() + " is Rejected Due to Unavailability of Special Test");
+                    continue;
+                }
                 if(priority == Priority.EMERGENCY){
                     state.setEmergencyPatientCount();
                 }
-                queue.produce(order);
+                queue.produce(order);   // If test is not a special one then start the registering process
                 LogWriter.log(name + " Registering " + order +"With Priority " +priority);
                 Thread.sleep(100 + rnd.nextInt(300));
             }

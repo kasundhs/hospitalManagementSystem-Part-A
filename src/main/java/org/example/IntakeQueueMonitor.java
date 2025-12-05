@@ -14,12 +14,12 @@ public class IntakeQueueMonitor {
         this.capacity = capacity;
     }
 
-    private int totalSize() {
+    public int totalQueueSize() {
         return emergencyQueue.size() + normalQueue.size();
     }
 
     public synchronized void produce(TestOrder order) throws InterruptedException {
-        while (totalSize() == capacity) {
+        while (totalQueueSize() == capacity) {
             wait();
         }
         if (order.priority == Priority.EMERGENCY)
@@ -30,10 +30,10 @@ public class IntakeQueueMonitor {
     }
 
     public synchronized TestOrder consume(boolean emergencyFirst) throws InterruptedException {
-        while (totalSize() == 0) {
+        while (totalQueueSize() == 0) {
             wait();
         }
-        TestOrder order;
+        TestOrder order = null;
         if(emergencyFirst && !emergencyQueue.isEmpty()){
             order = emergencyQueue.poll();
         }
@@ -44,12 +44,23 @@ public class IntakeQueueMonitor {
             order = normalQueue.poll();
             isForNormalPatients = false;
         }
-        else {
+        else if(!emergencyQueue.isEmpty()){
             order = emergencyQueue.poll();
             isForNormalPatients = true;
         }
         notifyAll();
         return order;
+    }
+    public synchronized void setExpiration(){
+        LogWriter.log("============= System set to ShutDown =============");
+        while(!normalQueue.isEmpty()){
+            TestOrder order = normalQueue.poll();
+            LogWriter.log(order.toString()+ " is expired due to system timeout");
+        }
+        while(!emergencyQueue.isEmpty()){
+            TestOrder order = emergencyQueue.poll();
+            LogWriter.log(order.toString()+ " is expired due to system timeout");
+        }
     }
 
 }
