@@ -31,6 +31,7 @@ public class ProcessedOrderQueueMonitor {
     }
 
     public synchronized void setExpiration() {
+        isProcessing = false;
         LogWriter.log("============= Processed Order Queue - Clearing remaining orders =============");
         if(processedOrderQueue.isEmpty()){
             LogWriter.log("============= All Reports are Generated Successfully. Nothing to Expire =============");
