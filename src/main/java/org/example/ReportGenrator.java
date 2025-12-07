@@ -33,7 +33,7 @@ public class ReportGenrator {
 
     public static void reportDetails(TestOrder order) {
         String timestamp = df.format(new Date());
-        String formatted = timestamp + " | \n" + order.toString() + " | \n"+order.priority+" | \n";
+        String formatted = " Time: "+timestamp + "\n Order ID: " + order.toString() + "\n Order Priority: "+order.priority;
 
         synchronized (lock) {
             // write to log file

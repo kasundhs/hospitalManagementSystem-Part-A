@@ -32,11 +32,21 @@ public class Auditor implements Runnable {
                         state.setTotalReportGeneratecount();
                         
                         LogWriter.log(name + " completed report generation for " + order);
+
+                        try{
+                            state.lockRead();
+                            LogWriter.log("Total Proceed by Doctors :"+state.getTotalProcessed()+" and Total Report Generated :"+state.getTotalReportGeneratecount());
+                            state.unlockRead();
+                        }
+                        catch (InterruptedException e){
+                            LogWriter.log(name + " interrupted unexpectedly");
+                        }
                     }
                 } finally {
                     // Always release the processing lock after generating report (or if order was null)
                     processedOrderQueue.releaseProcessingLock();
                 }
+                Thread.sleep(300);
             }
         } catch (InterruptedException e) {
             if (running) {

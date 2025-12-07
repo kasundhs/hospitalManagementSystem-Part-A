@@ -32,6 +32,9 @@ public class ProcessedOrderQueueMonitor {
 
     public synchronized void setExpiration() {
         LogWriter.log("============= Processed Order Queue - Clearing remaining orders =============");
+        if(processedOrderQueue.isEmpty()){
+            LogWriter.log("============= All Reports are Generated Successfully. Nothing to Expire =============");
+        }
         while (!processedOrderQueue.isEmpty()) {
             TestOrder order = processedOrderQueue.poll();
             LogWriter.log(order.toString() + " report generation expired due to system timeout");
