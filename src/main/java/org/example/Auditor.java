@@ -2,13 +2,15 @@ package org.example;
 
 public class Auditor implements Runnable {
     private final SystemStateMonitor state;
+    private final ProcessedOrderQueueMonitor processedOrderQueue;
     private volatile boolean running = true;
     private final String name;
     private Thread thread;
 
-    public Auditor(SystemStateMonitor state, String name) {
+    public Auditor(SystemStateMonitor state, ProcessedOrderQueueMonitor processedOrderQueue, String name) {
         this.name = name;
         this.state = state;
+        this.processedOrderQueue = processedOrderQueue;
     }
 
     @Override
@@ -16,14 +18,25 @@ public class Auditor implements Runnable {
     public void run() {
         try {
             while (running) {
-                state.lockRead();
-                int processed = state.getTotalProcessed();
-                state.unlockRead();
-
-                // System.out.println(getName() + " read totalProcessed=" + processed);
-                LogWriter.log(name + " read totalProcessed=" + processed);
-
-                Thread.sleep(600);
+                // Consume processed order from queue (with wait/notify synchronization)
+                TestOrder order = processedOrderQueue.consumeForReport();
+                
+                try {
+                    if (order != null) {
+                        // Generate report using ReportGenerator
+                        LogWriter.log(name + " generating report for " + order);
+                        ReportGenrator reportGenerator = new ReportGenrator(order);
+                        reportGenerator.reportDetails(order);
+                        
+                        // Update report count
+                        state.setTotalReportGeneratecount();
+                        
+                        LogWriter.log(name + " completed report generation for " + order);
+                    }
+                } finally {
+                    // Always release the processing lock after generating report (or if order was null)
+                    processedOrderQueue.releaseProcessingLock();
+                }
             }
         } catch (InterruptedException e) {
             if (running) {

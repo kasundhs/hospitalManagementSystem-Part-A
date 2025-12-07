@@ -31,13 +31,4 @@ public class LogWriter {
             writer.flush();
         }
     }
-
-    public static void close() {
-        synchronized (lock) {
-            if (writer != null) {
-                writer.flush();
-                writer.close();
-            }
-        }
-    }
 }

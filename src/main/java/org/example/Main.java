@@ -7,15 +7,16 @@ public class Main {
     public static void main(String[] args){
         IntakeQueueMonitor queue = new IntakeQueueMonitor(20);
         SystemStateMonitor state = new SystemStateMonitor();
+        ProcessedOrderQueueMonitor processedOrderQueue = new ProcessedOrderQueueMonitor();
 
         Producer prod1 = new Producer(queue, state, "Clinic counter -1");
         Producer prod2 = new Producer(queue, state, "Clinic counter -2");
 
-        Consumer consumer1 = new Consumer(queue, state, "Doctor -1");
-        Consumer consumer2 = new Consumer(queue, state, "Doctor -2");
+        Consumer consumer1 = new Consumer(queue, state, processedOrderQueue, "Doctor -1");
+        Consumer consumer2 = new Consumer(queue, state, processedOrderQueue, "Doctor -2");
 
-        Auditor auditor1 = new Auditor(state, "Auditor -1");
-        Auditor auditor2 = new Auditor(state, "Auditor -2");
+        Auditor auditor1 = new Auditor(state, processedOrderQueue, "Auditor -1");
+        Auditor auditor2 = new Auditor(state, processedOrderQueue, "Auditor -2");
 
         Supervisor supervisor = new Supervisor(state, "Supervisor");
 
@@ -28,9 +29,13 @@ public class Main {
         auditor2.start();
 
 
-        System.out.println("System running... Press ENTER to stop execution.");
-        Scanner sc = new Scanner(System.in);
-        sc.nextLine();
+        System.out.println("System running... Waiting 15 seconds before stopping...");
+
+        try {
+            Thread.sleep(15000); // wait for 15 seconds
+        } catch (InterruptedException e) {
+            System.out.println("Main thread interrupted.");
+        }
 
         prod1.shutdown();
         prod2.shutdown();
@@ -39,6 +44,7 @@ public class Main {
             System.out.println("System is Shutting Down....");
             consumer1.shutdown();
             consumer2.shutdown();
+            processedOrderQueue.setExpiration();
             auditor1.shutdown();
             auditor2.shutdown();
             supervisor.shutdown();

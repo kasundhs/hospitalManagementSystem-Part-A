@@ -8,6 +8,7 @@ public class SystemStateMonitor {
     private int totalProcessedReportCount = 0;
     private int emergencyPatientCount =0;
     private boolean emergencyPriorityEnabled = true;
+    private int totalReportGeneratecount =0;
 
     public synchronized void lockRead() throws InterruptedException {
         while (waitingWritersCount > 0 || activeWritersCount > 0) {
@@ -62,5 +63,10 @@ public class SystemStateMonitor {
     }
 
     public void decrementEmergencyPatientCount() { emergencyPatientCount--;}
+
+    public int getTotalReportGeneratecount() { return totalReportGeneratecount;}
+
+    public void setTotalReportGeneratecount() {totalReportGeneratecount++;
+    }
 
 }

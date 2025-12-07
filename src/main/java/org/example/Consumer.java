@@ -5,15 +5,17 @@ import java.util.Random;
 public class Consumer implements Runnable {
     private final IntakeQueueMonitor queue;
     private final SystemStateMonitor state;
+    private final ProcessedOrderQueueMonitor processedOrderQueue;
     private volatile boolean running = true;
     private final Random rnd = new Random();
     private final String name;
     private Thread thread;
 
-    public Consumer(IntakeQueueMonitor queue, SystemStateMonitor state, String name) {
+    public Consumer(IntakeQueueMonitor queue, SystemStateMonitor state, ProcessedOrderQueueMonitor processedOrderQueue, String name) {
         this.name = name;
         this.queue = queue;
         this.state = state;
+        this.processedOrderQueue = processedOrderQueue;
     }
 
     @Override
@@ -30,6 +32,8 @@ public class Consumer implements Runnable {
                     LogWriter.log(name + " processing " + order);
                     Thread.sleep(200 + rnd.nextInt(500));
                     state.incrementProcessed();
+                    // Add processed order to queue for auditor to generate report
+                    processedOrderQueue.addProcessedOrder(order);
                 }
             }
         } catch (InterruptedException e) {
