@@ -41,20 +41,19 @@ public class SystemStateMonitor {
         totalProcessedReportCount++;
     }
 
-    public synchronized int getTotalProcessed() {
+    public int getTotalProcessed() {
         return totalProcessedReportCount;
     }
-
 
     public synchronized void setEmergencyPriorityEnabled(boolean enabled) {
         emergencyPriorityEnabled = enabled;
     }
 
-    public synchronized boolean isEmergencyPriorityEnabled() {
+    public boolean isEmergencyPriorityEnabled() {
         return emergencyPriorityEnabled;
     }
 
-    public void setEmergencyPatientCount() {
+    public synchronized void setEmergencyPatientCount() {
         emergencyPatientCount++;
     }
 
@@ -62,11 +61,11 @@ public class SystemStateMonitor {
         return emergencyPatientCount;
     }
 
-    public void decrementEmergencyPatientCount() { emergencyPatientCount--;}
+    public synchronized void decrementEmergencyPatientCount() { emergencyPatientCount--;}
 
     public int getTotalReportGeneratecount() { return totalReportGeneratecount;}
 
-    public void setTotalReportGeneratecount() {totalReportGeneratecount++;
+    public synchronized void setTotalReportGeneratecount() {totalReportGeneratecount++;
     }
 
 }
