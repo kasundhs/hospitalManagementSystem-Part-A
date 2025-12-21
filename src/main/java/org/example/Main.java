@@ -29,7 +29,7 @@ public class Main {
         auditor2.start();
 
 
-        System.out.println("System running... Waiting 15 seconds before stopping...");
+        System.out.println("System Started... Waiting 15 seconds before stopping...");
 
         try {
             Thread.sleep(15000); // wait for 15 seconds
