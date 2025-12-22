@@ -26,7 +26,7 @@ public class Consumer implements Runnable {
                 boolean emergencyFirst = state.isEmergencyPriorityEnabled();
                 TestOrder order = queue.consume(emergencyFirst);
                 if(order!=null){
-                    if(order.priority == TestOrder.Priority.EMERGENCY)
+                    if(order.priority == Priority.EMERGENCY)
                         state.decrementEmergencyPatientCount();
                     // System.out.println(getName() + " processing " + order);
                     LogWriter.log(name + " processing " + order);

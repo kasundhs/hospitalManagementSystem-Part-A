@@ -1,15 +1,16 @@
 package org.example;
 
-public class TestOrder {
-    public enum Priority{
-        EMERGENCY,
-        NORMAL
-    };
-    public enum IsSpecialTest{
-        YES,
-        NO
-    };
+enum Priority{
+    EMERGENCY,
+    NORMAL
+};
 
+enum IsSpecialTest{
+    YES,
+    NO
+};
+
+public class TestOrder {
     private static int counter = 0;
     public final int id;
     public final String type;

@@ -1,7 +1,6 @@
 package org.example;
 
 import java.util.Random;
-import org.example.TestOrder.*;
 
 public class Producer implements Runnable {
     private final IntakeQueueMonitor queue;

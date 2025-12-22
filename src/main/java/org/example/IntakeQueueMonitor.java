@@ -2,7 +2,6 @@ package org.example;
 
 import java.util.LinkedList;
 import java.util.Queue;
-import org.example.TestOrder.Priority;
 
 public class IntakeQueueMonitor {
     private final Queue<TestOrder> emergencyQueue = new LinkedList<>();
