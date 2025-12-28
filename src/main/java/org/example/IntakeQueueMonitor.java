@@ -8,6 +8,7 @@ public class IntakeQueueMonitor {
     private final Queue<TestOrder> normalQueue = new LinkedList<>();
     private final int capacity;
     private boolean isForNormalPatients = true;
+    private volatile boolean isShuttingDown = false;
 
     public IntakeQueueMonitor(int capacity) {
         this.capacity = capacity;
@@ -18,9 +19,13 @@ public class IntakeQueueMonitor {
     }
 
     public synchronized void produce(TestOrder order) throws InterruptedException {
-        while (totalQueueSize() == capacity) {
+        if(isShuttingDown)
+            throw new InterruptedException("Cannot produce System is proceeding for shut down");
+        while (totalQueueSize() == capacity && !isShuttingDown) {
             wait();
         }
+        if(isShuttingDown)
+            throw new InterruptedException("Cannot Continue producing, due to System is to shut down");
         if (order.priority == Priority.EMERGENCY)
             emergencyQueue.add(order);
         else
@@ -29,8 +34,11 @@ public class IntakeQueueMonitor {
     }
 
     public synchronized TestOrder consume(boolean emergencyFirst) throws InterruptedException {
-        while (totalQueueSize() == 0) {
+        while (totalQueueSize() == 0 && !isShuttingDown) {
             wait();
+        }
+        if(totalQueueSize() == 0 && isShuttingDown) {
+            return null;
         }
         TestOrder order = null;
         if(emergencyFirst && !emergencyQueue.isEmpty()){
@@ -51,7 +59,9 @@ public class IntakeQueueMonitor {
         return order;
     }
     public synchronized void setExpiration(){
+        isShuttingDown = true;
         LogWriter.log("============= System set to ShutDown =============");
+        notifyAll();
         while(!normalQueue.isEmpty()){
             TestOrder order = normalQueue.poll();
             LogWriter.log(order.toString()+ " is expired due to system timeout");

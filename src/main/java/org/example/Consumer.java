@@ -29,11 +29,17 @@ public class Consumer implements Runnable {
                     if(order.priority == Priority.EMERGENCY)
                         state.decrementEmergencyPatientCount();
                     // System.out.println(getName() + " processing " + order);
-                    LogWriter.log(name + " processing " + order);
+                    try {
+                        LogWriter.log(name + " processing " + order);
+                        state.incrementProcessed();
+                        // Add processed order to queue for auditor to generate report
+                        processedOrderQueue.addProcessedOrder(order);
+                    }
+                    catch (InterruptedException e){
+                        LogWriter.log(order.toString()+" is started to Process. But Cannot Complete due to time Exceed.");
+                    }
                     Thread.sleep(200 + rnd.nextInt(500));
-                    state.incrementProcessed();
-                    // Add processed order to queue for auditor to generate report
-                    processedOrderQueue.addProcessedOrder(order);
+
                 }
             }
         } catch (InterruptedException e) {

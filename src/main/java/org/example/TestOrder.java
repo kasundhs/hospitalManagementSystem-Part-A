@@ -16,11 +16,14 @@ public class TestOrder {
     public final String type;
     public Priority priority;
     public final IsSpecialTest isSpecialTest;
+    private static final Object idLocker = new Object();
 
     public TestOrder(String type, Priority priority, IsSpecialTest isSpecialTest) {
         this.type = type;
         this.isSpecialTest = isSpecialTest;
-        this.id = ++counter;
+        synchronized (idLocker) {
+            this.id = ++counter;
+        }
         this.priority = priority;
     }
 

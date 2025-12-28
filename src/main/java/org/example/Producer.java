@@ -33,11 +33,16 @@ public class Producer implements Runnable {
                 if(priority == Priority.EMERGENCY){
                     state.setEmergencyPatientCount();
                 }
-                queue.produce(order);   // If test is not a special one then start the registering process
-                LogWriter.log(name + " Registering " + order +"With Priority " +priority);
+                try {
+                    queue.produce(order);   // If test is not a special one then start the registering process
+                    LogWriter.log(name + " Registering " + order + "With Priority " + priority);
+                }
+                catch (InterruptedException e){
+                    LogWriter.log( order.toString()+" Created. But It cannot be Completed, due to time Exceed.");
+                }
                 Thread.sleep(100 + rnd.nextInt(300));
             }
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             if (running) {
                 // System.out.println(getName() + " interrupted unexpectedly");
                 LogWriter.log(name + " interrupted unexpectedly");
