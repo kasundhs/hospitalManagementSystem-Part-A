@@ -30,15 +30,18 @@ public class Producer implements Runnable {
                     LogWriter.log(order.toString() + " is Rejected Due to Unavailability of Special Test");
                     continue;
                 }
-                if(priority == Priority.EMERGENCY){
-                    state.setEmergencyPatientCount();
-                }
                 try {
+                    if(priority == Priority.EMERGENCY){
+                        state.setEmergencyPatientCount();
+                    }
                     queue.produce(order);   // If test is not a special one then start the registering process
                     LogWriter.log(name + " Registering " + order + "With Priority " + priority);
                 }
                 catch (InterruptedException e){
                     LogWriter.log( order.toString()+" Created. But It cannot be Completed, due to time Exceed.");
+                    if(priority == Priority.EMERGENCY){
+                        state.decrementEmergencyPatientCount();
+                    }
                 }
                 Thread.sleep(100 + rnd.nextInt(300));
             }

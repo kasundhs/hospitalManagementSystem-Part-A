@@ -23,28 +23,25 @@ public class Consumer implements Runnable {
     public void run() {
         try {
             while (running) {
-                boolean emergencyFirst = state.isEmergencyPriorityEnabled();
-                TestOrder order = queue.consume(emergencyFirst);
-                if(order!=null){
+                TestOrder order = queue.consume(state.isEmergencyPriorityEnabled());
+                if (order == null) continue;
                     // System.out.println(getName() + " processing " + order);
-                    try {
-                        LogWriter.log(name + " processing " + order);
-                        state.incrementProcessed();
-                        // Add processed order to queue for auditor to generate report
-                        processedOrderQueue.addProcessedOrder(order);
-                        if(order.priority == Priority.EMERGENCY)
-                            state.decrementEmergencyPatientCount();
-                    }
-                    catch (InterruptedException e){
-                        LogWriter.log(order.toString()+" is started to Process. But Cannot Complete due to time Exceed.");
-                        if(order.priority == Priority.EMERGENCY)
-                            state.setEmergencyPatientCount();
-                        processedOrderQueue.removeProcessedOrder();
-                        state.decrementProceed();
-                    }
-                    Thread.sleep(200 + rnd.nextInt(500));
-
+                try {
+                    LogWriter.log(name + " processing " + order);
+                    state.incrementProcessed();
+                    // Add processed order to queue for auditor to generate report
+                    processedOrderQueue.addProcessedOrder(order);
+                    if(order.priority == Priority.EMERGENCY)
+                        state.decrementEmergencyPatientCount();
                 }
+                catch (Exception e){
+                    LogWriter.log(order.toString()+" is started to Process. But Cannot Complete due to time Exceed.");
+                    if(order.priority == Priority.EMERGENCY)
+                        state.setEmergencyPatientCount();
+                    processedOrderQueue.removeProcessedOrder();
+                    state.decrementProceed();
+                }
+                Thread.sleep(200 + rnd.nextInt(500));
             }
         } catch (InterruptedException e) {
             if (running) {
