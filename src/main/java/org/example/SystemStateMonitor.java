@@ -40,6 +40,9 @@ public class SystemStateMonitor {
     public synchronized void incrementProcessed() {
         totalProcessedReportCount++;
     }
+    public synchronized void decrementProceed(){
+        totalProcessedReportCount--;
+    }
 
     public int getTotalProcessed() {
         return totalProcessedReportCount;

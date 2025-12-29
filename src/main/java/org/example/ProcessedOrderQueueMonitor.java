@@ -24,6 +24,10 @@ public class ProcessedOrderQueueMonitor {
         notifyAll(); // Notify other waiting auditors
         return order;
     }
+    public synchronized void removeProcessedOrder(){ // remove in consumer interrupted
+        processedOrderQueue.poll();
+        notifyAll();
+    }
 
     public synchronized void releaseProcessingLock() {
         isProcessing = false;
