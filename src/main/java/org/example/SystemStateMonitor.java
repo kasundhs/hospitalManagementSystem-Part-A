@@ -12,28 +12,6 @@ public class SystemStateMonitor {
     private int numberOfProducerThreads = 1;
     private int numberOfConsumerThreads = 1;
 
-    public int getNumberOfProducerThreads() {
-        return numberOfProducerThreads;
-    }
-
-    public void setNumberOfProducerThreads() {
-        numberOfProducerThreads++;
-    }
-
-    public int getNumberOfConsumerThreads() {
-        return numberOfConsumerThreads;
-    }
-
-    public void setNumberOfConsumerThreads() {
-        numberOfConsumerThreads++;
-    }
-    public void reduceProducersCount(){
-        numberOfProducerThreads--;
-    }
-    public void reduceConsumersCount(){
-        numberOfConsumerThreads--;
-    }
-
     public synchronized void lockRead() throws InterruptedException {
         while (waitingWritersCount > 0 || activeWritersCount > 0) {
             wait();
@@ -67,32 +45,41 @@ public class SystemStateMonitor {
     public synchronized void decrementProceed(){
         totalProcessedReportCount--;
     }
-
     public int getTotalProcessed() {
         return totalProcessedReportCount;
     }
-
     public synchronized void setEmergencyPriorityEnabled(boolean enabled) {
         emergencyPriorityEnabled = enabled;
     }
-
     public boolean isEmergencyPriorityEnabled() {
         return emergencyPriorityEnabled;
     }
-
     public synchronized void setEmergencyPatientCount() {
         emergencyPatientCount++;
     }
-
     public int getEmergencyPatientCount() {
         return emergencyPatientCount;
     }
-
     public synchronized void decrementEmergencyPatientCount() { emergencyPatientCount--;}
-
     public int getTotalReportGeneratecount() { return totalReportGeneratecount;}
-
-    public synchronized void setTotalReportGeneratecount() {totalReportGeneratecount++;
+    public synchronized void setTotalReportGeneratecount() {totalReportGeneratecount++;}
+    public int getNumberOfProducerThreads() {
+        return numberOfProducerThreads;
+    }
+    public void setNumberOfProducerThreads() {
+        numberOfProducerThreads++;
+    }
+    public int getNumberOfConsumerThreads() {
+        return numberOfConsumerThreads;
+    }
+    public void setNumberOfConsumerThreads() {
+        numberOfConsumerThreads++;
+    }
+    public void reduceProducersCount(){
+        numberOfProducerThreads--;
+    }
+    public void reduceConsumersCount(){
+        numberOfConsumerThreads--;
     }
 
 }

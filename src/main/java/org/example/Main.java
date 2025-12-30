@@ -4,19 +4,19 @@ public class Main {
     public static void main(String[] args){
         IntakeQueueMonitor queue = new IntakeQueueMonitor(Constants.MAXIMUM_QUEUE_SIZE);
         SystemStateMonitor state = new SystemStateMonitor();
-        EventScheduler event = new EventScheduler(queue,state);
         ProcessedOrderQueueMonitor processedOrderQueue = new ProcessedOrderQueueMonitor();
+        EventScheduler event = new EventScheduler(queue,state,processedOrderQueue);
 
         /* Initially it has only one Producer and one Consumers.
         Assume: Maximum number of producers are 3 and maximum number of consumers are 3.
          */
         Producer prod1 = new Producer(queue, state, "Clinic counter -1");
-        Consumer consumer1 = new Consumer(queue, state, processedOrderQueue, event, "Doctor -1");
+        Consumer consumer1 = new Consumer(queue, state, processedOrderQueue, "Doctor -1");
 
         Auditor auditor1 = new Auditor(state, processedOrderQueue, "Auditor -1");
         Auditor auditor2 = new Auditor(state, processedOrderQueue, "Auditor -2");
 
-        Supervisor supervisor = new Supervisor(state, "Supervisor");
+        Supervisor supervisor = new Supervisor(state,event, "Supervisor");
 
         prod1.start();
         supervisor.start();
@@ -33,13 +33,15 @@ public class Main {
             System.out.println("Main thread interrupted.");
         }
 
+        supervisor.shutdown();
         prod1.shutdown();
+        event.reduceProducers();
         queue.setExpiration();
         System.out.println("System is Shutting Down....");
         consumer1.shutdown();
+        event.reduceConsumers();
         processedOrderQueue.setExpiration();
         auditor1.shutdown();
         auditor2.shutdown();
-        supervisor.shutdown();
     }
 }

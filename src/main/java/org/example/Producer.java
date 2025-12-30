@@ -63,4 +63,7 @@ public class Producer implements Runnable {
         if(thread != null)
             thread.interrupt();
     }
+    public String toString(){
+        return name;
+    }
 }

@@ -6,14 +6,12 @@ public class Consumer implements Runnable {
     private final IntakeQueueMonitor queue;
     private final SystemStateMonitor state;
     private final ProcessedOrderQueueMonitor processedOrderQueue;
-    private final EventScheduler event;
     private volatile boolean running = true;
     private final Random rnd = new Random();
     private final String name;
     private Thread thread;
 
-    public Consumer(IntakeQueueMonitor queue, SystemStateMonitor state, ProcessedOrderQueueMonitor processedOrderQueue, EventScheduler event, String name) {
-        this.event = event;
+    public Consumer(IntakeQueueMonitor queue, SystemStateMonitor state, ProcessedOrderQueueMonitor processedOrderQueue, String name) {
         this.name = name;
         this.queue = queue;
         this.state = state;
@@ -28,7 +26,6 @@ public class Consumer implements Runnable {
                 TestOrder order = queue.consume(state.isEmergencyPriorityEnabled());
                 if (order == null) continue;
                     // System.out.println(getName() + " processing " + order);
-                event.addProducers();
                 try {
                     LogWriter.log(name + " processing " + order);
                     state.incrementProcessed();
@@ -63,6 +60,10 @@ public class Consumer implements Runnable {
         running = false;
         if (thread != null)
             thread.interrupt();
+    }
+
+    public String toString(){
+        return name;
     }
 }
 

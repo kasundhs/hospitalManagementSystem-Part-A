@@ -4,12 +4,14 @@ import java.util.Random;
 
 public class Supervisor implements Runnable {
     private final SystemStateMonitor state;
+    private final EventScheduler event;
     private volatile boolean running = true;
     private final Random rnd = new Random();
     private final String name;
     private Thread thread;
 
-    public Supervisor(SystemStateMonitor state, String name) {
+    public Supervisor(SystemStateMonitor state, EventScheduler event, String name) {
+        this.event = event;
         this.name = name;
         this.state = state;
     }
@@ -19,6 +21,7 @@ public class Supervisor implements Runnable {
     public void run() {
         try {
             while (running) {
+                event.addProducers();   // add producer if needed.
                 state.lockWrite();
                 if(state.getEmergencyPatientCount() < 2){
                     state.setEmergencyPriorityEnabled(false);
@@ -27,7 +30,7 @@ public class Supervisor implements Runnable {
                     state.setEmergencyPriorityEnabled(true);
                 LogWriter.log(name + "Update Emergency Prioritization as " + state.isEmergencyPriorityEnabled());
                 state.unlockWrite();
-
+                event.addConsumer();   // add producer if needed.
                 Thread.sleep(rnd.nextInt(1000));
             }
         } catch (InterruptedException e) {
