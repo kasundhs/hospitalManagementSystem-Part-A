@@ -21,7 +21,7 @@ public class Supervisor implements Runnable {
     public void run() {
         try {
             while (running) {
-                event.addConsumer();   // add producer if needed.
+                event.consumerThreadMaintainer();   // add or remove consumer if needed.
                 state.lockWrite();
                 if(state.getEmergencyPatientCount() < 2){
                     state.setEmergencyPriorityEnabled(false);
@@ -30,7 +30,7 @@ public class Supervisor implements Runnable {
                     state.setEmergencyPriorityEnabled(true);
                 LogWriter.log(name + "Update Emergency Prioritization as " + state.isEmergencyPriorityEnabled());
                 state.unlockWrite();
-                event.addProducers();   // add producer if needed.
+                event.producerThreadMaintainer();   // add or remove producer if needed.
                 Thread.sleep(rnd.nextInt(1000));
             }
         } catch (InterruptedException e) {

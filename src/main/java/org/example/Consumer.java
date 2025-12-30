@@ -62,6 +62,19 @@ public class Consumer implements Runnable {
             thread.interrupt();
     }
 
+    public void gracefulShutdown() {
+        running =false;
+        if ((thread != null)) {
+            thread.interrupt();
+            try {
+                thread.join();
+            }catch (InterruptedException e) {
+                shutdown();
+                LogWriter.threadWriterLog("Exception is occurred while joining the thread : " + name);
+            }
+        }
+    }
+
     public String toString(){
         return name;
     }

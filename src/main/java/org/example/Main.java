@@ -33,13 +33,14 @@ public class Main {
             System.out.println("Main thread interrupted.");
         }
 
+        LogWriter.threadWriterLog("============ System Shutdown is Started ============");
         supervisor.shutdown();
         prod1.shutdown();
-        event.reduceProducers();
+        event.shutdownAllProducers();
         queue.setExpiration();
         System.out.println("System is Shutting Down....");
         consumer1.shutdown();
-        event.reduceConsumers();
+        event.shutdownAllConsumers();
         processedOrderQueue.setExpiration();
         auditor1.shutdown();
         auditor2.shutdown();
