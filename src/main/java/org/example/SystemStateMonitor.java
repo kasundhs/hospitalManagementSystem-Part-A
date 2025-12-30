@@ -6,9 +6,33 @@ public class SystemStateMonitor {
     private int activeWritersCount = 0;
 
     private int totalProcessedReportCount = 0;
-    private int emergencyPatientCount =0;
+    private int emergencyPatientCount = 0;
     private boolean emergencyPriorityEnabled = true;
-    private int totalReportGeneratecount =0;
+    private int totalReportGeneratecount = 0;
+    private int numberOfProducerThreads = 1;
+    private int numberOfConsumerThreads = 1;
+
+    public int getNumberOfProducerThreads() {
+        return numberOfProducerThreads;
+    }
+
+    public void setNumberOfProducerThreads() {
+        numberOfProducerThreads++;
+    }
+
+    public int getNumberOfConsumerThreads() {
+        return numberOfConsumerThreads;
+    }
+
+    public void setNumberOfConsumerThreads() {
+        numberOfConsumerThreads++;
+    }
+    public void reduceProducersCount(){
+        numberOfProducerThreads--;
+    }
+    public void reduceConsumersCount(){
+        numberOfConsumerThreads--;
+    }
 
     public synchronized void lockRead() throws InterruptedException {
         while (waitingWritersCount > 0 || activeWritersCount > 0) {

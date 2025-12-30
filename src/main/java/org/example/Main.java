@@ -2,15 +2,16 @@ package org.example;
 
 public class Main {
     public static void main(String[] args){
-        IntakeQueueMonitor queue = new IntakeQueueMonitor(20);
+        IntakeQueueMonitor queue = new IntakeQueueMonitor(Constants.MAXIMUM_QUEUE_SIZE);
         SystemStateMonitor state = new SystemStateMonitor();
+        EventScheduler event = new EventScheduler(queue,state);
         ProcessedOrderQueueMonitor processedOrderQueue = new ProcessedOrderQueueMonitor();
 
+        /* Initially it has only one Producer and one Consumers.
+        Assume: Maximum number of producers are 3 and maximum number of consumers are 3.
+         */
         Producer prod1 = new Producer(queue, state, "Clinic counter -1");
-        Producer prod2 = new Producer(queue, state, "Clinic counter -2");
-
-        Consumer consumer1 = new Consumer(queue, state, processedOrderQueue, "Doctor -1");
-        Consumer consumer2 = new Consumer(queue, state, processedOrderQueue, "Doctor -2");
+        Consumer consumer1 = new Consumer(queue, state, processedOrderQueue, event, "Doctor -1");
 
         Auditor auditor1 = new Auditor(state, processedOrderQueue, "Auditor -1");
         Auditor auditor2 = new Auditor(state, processedOrderQueue, "Auditor -2");
@@ -18,10 +19,8 @@ public class Main {
         Supervisor supervisor = new Supervisor(state, "Supervisor");
 
         prod1.start();
-        prod2.start();
         supervisor.start();
         consumer1.start();
-        consumer2.start();
         auditor1.start();
         auditor2.start();
 
@@ -35,11 +34,9 @@ public class Main {
         }
 
         prod1.shutdown();
-        prod2.shutdown();
         queue.setExpiration();
         System.out.println("System is Shutting Down....");
         consumer1.shutdown();
-        consumer2.shutdown();
         processedOrderQueue.setExpiration();
         auditor1.shutdown();
         auditor2.shutdown();
