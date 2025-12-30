@@ -19,10 +19,10 @@ public class Main {
         Supervisor supervisor = new Supervisor(state,event, "Supervisor");
 
         prod1.start();
-        supervisor.start();
         consumer1.start();
         auditor1.start();
         auditor2.start();
+        supervisor.start();
 
 
         System.out.println("System Started... Waiting 15 seconds before stopping...");

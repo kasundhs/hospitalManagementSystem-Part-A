@@ -15,7 +15,7 @@ public class EventScheduler{
         this.processedOrderQueue = processedOrderQueue;
     }
     private synchronized String percentageCalculator(){
-        double capacityPercentage = ((double) queue.totalQueueSize() /Constants.MAXIMUM_QUEUE_SIZE)*100;
+        double capacityPercentage = ((double) queue.totalQueueSize() /Constants.MAXIMUM_QUEUE_SIZE);
         if(capacityPercentage < 0.3){
             return "LOW";
         } else if (capacityPercentage < 0.7) {
@@ -26,7 +26,7 @@ public class EventScheduler{
 
     public synchronized void addProducers(){
         int newProducerNumber = (state.getNumberOfProducerThreads())+1;
-        if(newProducerNumber <= Constants.MAXIMUM_PRODUCER_SIZE && (!percentageCalculator().equals("HIGH"))) {
+        if(newProducerNumber <= Constants.MAXIMUM_PRODUCER_SIZE && (percentageCalculator().equals("LOW"))) {
             String name = "Clinic counter -" + String.valueOf(newProducerNumber);
             Producer producer = new Producer(queue, state, name);
             producerThreads.add(producer);
