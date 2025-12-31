@@ -30,12 +30,12 @@ public class EventScheduler{
         return "HIGH";
     }
 
-    private synchronized void addProducers(){
+    private synchronized void addProducers(String usagePercentage){
         int newProducerNumber = 0;
         if(producerIds.isEmpty()) newProducerNumber = (state.getNumberOfProducerThreads())+1;
         else newProducerNumber = producerIds.peek();
 
-        if(newProducerNumber <= Constants.MAXIMUM_PRODUCER_SIZE && (percentageCalculator().equals("LOW"))) {
+        if(newProducerNumber <= Constants.MAXIMUM_PRODUCER_SIZE && (usagePercentage.equals("LOW"))) {
             String name = "Clinic counter -" + String.valueOf(newProducerNumber);
             Producer producer = new Producer(queue, state, name);
             producerThreads.add(producer);
@@ -46,12 +46,12 @@ public class EventScheduler{
         }
     }
 
-    private synchronized void addConsumer(){
+    private synchronized void addConsumer(String usagePercentage){
         int newConsumerNumber = 0;
         if(consumerIds.isEmpty()) newConsumerNumber = (state.getNumberOfConsumerThreads())+1;
         else newConsumerNumber = consumerIds.peek();
 
-        if(newConsumerNumber <= Constants.MAXIMUM_CONSUMER_SIZE && (!percentageCalculator().equals("LOW"))) {
+        if(newConsumerNumber <= Constants.MAXIMUM_CONSUMER_SIZE && (!usagePercentage.equals("LOW"))) {
             String name = "Doctor -"+String.valueOf(newConsumerNumber);
             Consumer consumer = new Consumer(queue,state,processedOrderQueue, name);
             consumerThreads.add(consumer);
@@ -81,8 +81,8 @@ public class EventScheduler{
     }
 
     /* In here implement reduce one thread from either producer or consumer at one time. */
-    private synchronized void graceFullShutdownProducer(){
-        if(percentageCalculator().equals("HIGH") && (!producerThreads.isEmpty())){
+    private synchronized void graceFullShutdownProducer(String usagePercentage){
+        if(usagePercentage.equals("HIGH") && (!producerThreads.isEmpty())){
             Producer producer = producerThreads.poll();
             producer.gracefulShutdown();
             state.reduceProducersCount();
@@ -92,8 +92,8 @@ public class EventScheduler{
         }
     }
 
-    private synchronized void graceFullShutdownConsumer(){
-        if(percentageCalculator().equals("LOW") && (!consumerThreads.isEmpty())){
+    private synchronized void graceFullShutdownConsumer(String usagePercentage){
+        if(usagePercentage.equals("LOW") && (!consumerThreads.isEmpty())){
             Consumer consumer = consumerThreads.poll();
             consumer.gracefulShutdown();
             state.reduceConsumersCount();
@@ -104,12 +104,14 @@ public class EventScheduler{
     }
 
     public synchronized void producerThreadMaintainer(){
-        addProducers();
-        graceFullShutdownProducer();
+        String usagePercentage = percentageCalculator();
+        addProducers(usagePercentage);
+        graceFullShutdownProducer(usagePercentage);
     }
 
     public synchronized void consumerThreadMaintainer(){
-        addConsumer();
-        graceFullShutdownConsumer();
+        String usagePercentage = percentageCalculator();
+        addConsumer(usagePercentage);
+        graceFullShutdownConsumer(usagePercentage);
     }
 }
