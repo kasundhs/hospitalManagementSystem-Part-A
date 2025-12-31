@@ -42,7 +42,7 @@ public class EventScheduler{
             state.setNumberOfProducerThreads();
             producer.start();
             LogWriter.threadWriterLog(name + " is Created due to Slowness of Producing.");
-            producerIds.poll();
+            if (!producerIds.isEmpty()) producerIds.poll();
         }
     }
 
@@ -58,7 +58,7 @@ public class EventScheduler{
             state.setNumberOfConsumerThreads();
             consumer.start();
             LogWriter.threadWriterLog(name + " is Created due to Slowness of the Consuming.");
-            consumerIds.poll();
+            if (!consumerIds.isEmpty()) consumerIds.poll();
         }
     }
 
