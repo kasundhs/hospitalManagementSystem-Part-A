@@ -11,6 +11,12 @@ public class SystemStateMonitor {
     private int totalReportGeneratecount = 0;
     private int numberOfProducerThreads = 1;
     private int numberOfConsumerThreads = 1;
+    
+    // Performance metrics
+    private int totalRegisteredCount = 0;
+    private long producerTotalTimeConsumption = 0;
+    private long consumerTotalTimeConsumption = 0;
+    private long auditorTotalTimeConsumption = 0;
 
     public synchronized void lockRead() throws InterruptedException {
         while (waitingWritersCount > 0 || activeWritersCount > 0) {
@@ -80,6 +86,39 @@ public class SystemStateMonitor {
     }
     public void reduceConsumersCount(){
         numberOfConsumerThreads--;
+    }
+    
+    // Performance metrics methods
+    public synchronized void incrementTotalRegisteredCount() {
+        totalRegisteredCount++;
+    }
+    
+    public int getTotalRegisteredCount() {
+        return totalRegisteredCount;
+    }
+    
+    public synchronized void addProducerTimeConsumption(long time) {
+        producerTotalTimeConsumption += time;
+    }
+    
+    public long getProducerTotalTimeConsumption() {
+        return producerTotalTimeConsumption;
+    }
+    
+    public synchronized void addConsumerTimeConsumption(long time) {
+        consumerTotalTimeConsumption += time;
+    }
+    
+    public long getConsumerTotalTimeConsumption() {
+        return consumerTotalTimeConsumption;
+    }
+    
+    public synchronized void addAuditorTimeConsumption(long time) {
+        auditorTotalTimeConsumption += time;
+    }
+    
+    public long getAuditorTotalTimeConsumption() {
+        return auditorTotalTimeConsumption;
     }
 
 }

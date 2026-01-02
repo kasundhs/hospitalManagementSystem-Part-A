@@ -44,5 +44,39 @@ public class Main {
         processedOrderQueue.setExpiration();
         auditor1.shutdown();
         auditor2.shutdown();
+        
+        // Calculate and display performance metrics
+        System.out.println("\n============ Performance Metrics ============");
+        System.out.println("Total Registered Count (without rejecting): " + state.getTotalRegisteredCount());
+        System.out.println("Total Processed Count: " + state.getTotalProcessed());
+        System.out.println("Total Report Generated Count: " + state.getTotalReportGeneratecount());
+        
+        // Calculate average time consumption
+        int registeredCount = state.getTotalRegisteredCount();
+        int processedCount = state.getTotalProcessed();
+        int reportCount = state.getTotalReportGeneratecount();
+        
+        if (registeredCount > 0) {
+            double avgProducerTime = (double) state.getProducerTotalTimeConsumption() / registeredCount;
+            System.out.println("Average Producer Time Consumption: " + String.format("%.2f", avgProducerTime) + " ms");
+        } else {
+            System.out.println("Average Producer Time Consumption: N/A (no registrations)");
+        }
+        
+        if (processedCount > 0) {
+            double avgConsumerTime = (double) state.getConsumerTotalTimeConsumption() / processedCount;
+            System.out.println("Average Consumer Time Consumption: " + String.format("%.2f", avgConsumerTime) + " ms");
+        } else {
+            System.out.println("Average Consumer Time Consumption: N/A (no processed orders)");
+        }
+        
+        if (reportCount > 0) {
+            double avgAuditorTime = (double) state.getAuditorTotalTimeConsumption() / reportCount;
+            System.out.println("Average Auditor Time Consumption: " + String.format("%.2f", avgAuditorTime) + " ms");
+        } else {
+            System.out.println("Average Auditor Time Consumption: N/A (no reports generated)");
+        }
+        
+        System.out.println("=============================================\n");
     }
 }

@@ -22,6 +22,7 @@ public class Producer implements Runnable {
         String[] types = {"PCR", "Blood Test", "Histopathology)"};
         try {
             while (running) {
+                long startTime = System.currentTimeMillis();
                 Priority priority = rnd.nextInt(10) < 5 ? Priority.EMERGENCY : Priority.NORMAL;
                 IsSpecialTest testSpeciality = rnd.nextInt(10) < 2 ? IsSpecialTest.YES : IsSpecialTest.NO;
                 TestOrder order = new TestOrder(types[rnd.nextInt(types.length)],priority, testSpeciality);
@@ -35,6 +36,10 @@ public class Producer implements Runnable {
                         state.setEmergencyPatientCount();
                     }
                     queue.produce(order);   // If test is not a special one then start the registering process
+                    long endTime = System.currentTimeMillis();
+                    long timeConsumed = endTime - startTime;
+                    state.addProducerTimeConsumption(timeConsumed);
+                    state.incrementTotalRegisteredCount();
                     LogWriter.log(name + " Registering " + order + "With Priority " + priority);
                 }
                 catch (InterruptedException e){

@@ -18,6 +18,7 @@ public class Auditor implements Runnable {
     public void run() {
         try {
             while (running) {
+                long startTime = System.currentTimeMillis();
                 // Consume processed order from queue (with wait/notify synchronization)
                 TestOrder order = processedOrderQueue.consumeForReport();
                 
@@ -30,6 +31,10 @@ public class Auditor implements Runnable {
                         
                         // Update report count
                         state.setTotalReportGeneratecount();
+                        
+                        long endTime = System.currentTimeMillis();
+                        long timeConsumed = endTime - startTime;
+                        state.addAuditorTimeConsumption(timeConsumed);
                         
                         LogWriter.log(name + " completed report generation for " + order);
 
